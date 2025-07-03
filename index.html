@@ -1,117 +1,167 @@
 birthday html
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Happy Birthday, Janeman 🎂</title>
+  <title>🎂 Happy 18th Birthday</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
+      background: #f5f5f5;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
-      overflow: hidden;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .question-box, .balloon-area, .cake-area, .message-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .question-box.active, .balloon-area.active, .cake-area.active, .message-box.active {
+      display: flex;
+    }
+    button {
+      background: #111;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .balloon {
+      width: 50px;
+      height: 70px;
+      border-radius: 50% 50% 45% 45%;
+      background: hsl(var(--hue), 70%, 60%);
+      margin: 10px;
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .balloon:active {
+      transform: scale(0.8);
+    }
+    .cake {
+      width: 200px;
+      height: 150px;
+      background: #ffb6c1;
+      border-radius: 10px;
+      position: relative;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      padding-top: 110px;
+    }
+    .cake::before {
+      content: '🎂 JANIMANA';
+      position: absolute;
+      top: 40px;
+      left: 0;
+      right: 0;
       text-align: center;
       color: #fff;
+      font-size: 18px;
     }
-
-    h1 {
-      font-size: 3em;
-      margin-top: 100px;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    p {
-      font-size: 1.3em;
-      margin: 20px auto;
-      max-width: 600px;
-      animation: fadeIn 3s ease-in-out;
-    }
-
-    .balloon {
-      width: 60px;
-      height: 80px;
-      background-color: #ff4081;
-      border-radius: 50%;
+    .candles {
       position: absolute;
-      animation: float 6s ease-in-out infinite;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
     }
-
-    @keyframes float {
-      0% { transform: translateY(100vh); }
-      100% { transform: translateY(-120vh); }
+    .candle {
+      width: 6px;
+      height: 20px;
+      background: orange;
+      margin: 0 5px;
+      display: inline-block;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .knife {
+      margin-top: 20px;
     }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      pointer-events: none;
+    .message {
+      font-size: 20px;
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     audio {
       display: none;
     }
   </style>
 </head>
 <body>
-  <canvas id="confetti"></canvas>
-
-  <h1>🎉 Happy 18th Birthday, Janeman! 🦛🎂💗</h1>
-  <p>Wishing you a day filled with joy, laughter, and great memories.<br>
-     Hope this year brings you lots of happiness and success.<br>
-     May all your dreams come true!</p>
-  <p>Enjoy your day! 🌟</p>
-
-  <!-- Balloons -->
-  <div class="balloon" style="left: 10%; background: #f06292;"></div>
-  <div class="balloon" style="left: 30%; background: #ba68c8;"></div>
-  <div class="balloon" style="left: 50%; background: #4fc3f7;"></div>
-  <div class="balloon" style="left: 70%; background: #81c784;"></div>
-
-  <!-- Music -->
-  <audio autoplay loop>
-    <!-- Replace with your own happy-birthday.mp3 in the same folder -->
+  <div class="question-box active">
+    <h1>Do you want a surprise? 🎁</h1>
+    <button onclick="startBalloons(true)">Yes</button>
+    <button onclick="startBalloons(false)">No</button>
+  </div>  <div class="balloon-area"></div>  <div class="cake-area">
+    <div class="cake">
+      <div class="candles">
+        <div class="candle"></div>
+        <div class="candle"></div>
+        <div class="candle"></div>
+      </div>
+    </div>
+    <button class="knife" onclick="cutCake()">Cut the Cake 🎂</button>
+  </div>  <div class="message-box">
+    <div class="message">
+      🎉 Happy 18th Birthday, Hippo! 🦛💖<br><br>
+      I hope you enjoyed popping those balloons and cutting your cake! 🎈🎂<br>
+      May this year bring you laughter, love, and everything you wish for.<br><br>
+      — From Mohit ❤️
+    </div>
+  </div>  <audio id="bg-music" autoplay loop>
     <source src="happy-birthday.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
   </audio>
+  <audio id="cut-sound">
+    <source src="cut.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="wish-sound">
+    <source src="wish.mp3" type="audio/mpeg">
+  </audio>  <script>
+    const balloonArea = document.querySelector('.balloon-area');
+    const cakeArea = document.querySelector('.cake-area');
+    const messageBox = document.querySelector('.message-box');
+    let popped = 0;
 
-  <!-- Confetti -->
-  <script>
-    const canvas = document.getElementById("confetti");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    function startBalloons(accepted) {
+      document.querySelector('.question-box').classList.remove('active');
+      if (!accepted) return;
+      balloonArea.classList.add('active');
 
-    const pieces = [];
-    for (let i = 0; i < 150; i++) {
-      pieces.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 6 + 4,
-        color: `hsl(${Math.random() * 360}, 100%, 60%)`,
-        speed: Math.random() * 3 + 2
-      });
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let p of pieces) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-        p.y += p.speed;
-        if (p.y > canvas.height) p.y = 0;
+      for (let i = 0; i < 18; i++) {
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        balloon.style.setProperty('--hue', Math.random() * 360);
+        balloon.onclick = () => {
+          balloon.remove();
+          popped++;
+          if (popped === 18) {
+            balloonArea.classList.remove('active');
+            cakeArea.classList.add('active');
+          }
+        };
+        balloonArea.appendChild(balloon);
       }
-      requestAnimationFrame(draw);
     }
 
-    draw();
-  </script>
-</body>
+    function cutCake() {
+      document.getElementById('cut-sound').play();
+      document.getElementById('wish-sound').play();
+      cakeArea.classList.remove('active');
+      messageBox.classList.add('active');
+    }
+  </script></body>
 </html>
